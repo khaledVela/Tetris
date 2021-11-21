@@ -98,7 +98,8 @@ public class Tablerodos extends JPanel implements ActionListener {
 
     public void pers(ArrayList e) {
         JFrame jFrame = new JFrame();
-        jFrame.setBounds(500, 300, 200, 300);
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setSize(200,300);
         JTextArea jpane = new JTextArea();
         jpane.append("                Lista de Usuarios\n");
         for (int i = 0; i < e.size(); i++) {
@@ -110,8 +111,8 @@ public class Tablerodos extends JPanel implements ActionListener {
         salir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pause();
                 jFrame.dispose();
+                pause();
             }
         });
         jFrame.add(salir);

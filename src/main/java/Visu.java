@@ -61,8 +61,8 @@ public class Visu extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clic = (JButton) e.getSource();
-        if (usuario.getText().equals("Nick name")||usuario.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Cambie nombre de usuario");
+        if (usuario.getText().equals("Nick name")||usuario.getText().equals("")||usuario.getText().length()==5) {
+            JOptionPane.showMessageDialog(this, "Cambie nombre de usuario\no que tenga hasta 4 caracteres");
         } else {
             if (clic.equals(uno)) {
                 String d[] = {"facil", "normal", "dificil"};
@@ -70,7 +70,7 @@ public class Visu extends JFrame implements ActionListener {
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/main/java/Imagen/dif.png"), d
                         , "Option");
                 this.dispose();
-                Tetris game = new Tetris(x);
+                Tetris game = new Tetris(x,usuario.getText());
                 game.setLocationRelativeTo(null);
                 game.setVisible(true);
             }

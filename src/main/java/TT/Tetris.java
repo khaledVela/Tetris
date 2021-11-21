@@ -11,10 +11,10 @@ public class Tetris extends JFrame {
     JLabel statusbar;
 
 
-    public Tetris(int dif) {
+    public Tetris(int dif,String id) {
         statusbar = new JLabel(" 0");
         add(statusbar, BorderLayout.SOUTH);
-        Tablero board = new Tablero(this,dif);
+        Tablero board = new Tablero(this,dif,id);
         add(board);
         board.start();
         setSize(400, 800);
