@@ -1,17 +1,19 @@
+package Gen;
+
 import TT.Tetris;
+import TT2.Servidor;
 import TT2.Tetrisdos;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Visu extends JFrame implements ActionListener {
     private JPanel jpanel;
@@ -19,6 +21,7 @@ public class Visu extends JFrame implements ActionListener {
     private JButton dos = new JButton("Multiplayer ");
     private JLabel panel;
     private JTextField usuario = new JTextField("Nick name");
+    private int puerto;
 
     public Visu() {
         setSize(700, 500);
@@ -48,8 +51,8 @@ public class Visu extends JFrame implements ActionListener {
         usuario.setBorder(rounded);
         usuario.setHorizontalAlignment((int) CENTER_ALIGNMENT);
         usuario.setBounds(110, 320, 150, 50);
-        usuario.addMouseListener(new MouseAdapter(){
-            public void mouseClicked(MouseEvent e){
+        usuario.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
                 usuario.setText("");
             }
         });
@@ -61,7 +64,7 @@ public class Visu extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clic = (JButton) e.getSource();
-        if (usuario.getText().equals("Nick name")||usuario.getText().equals("")||usuario.getText().length()==5) {
+        if (usuario.getText().equals("Nick name") || usuario.getText().equals("") || usuario.getText().length() == 5) {
             JOptionPane.showMessageDialog(this, "Cambie nombre de usuario\no que tenga hasta 4 caracteres");
         } else {
             if (clic.equals(uno)) {
@@ -70,14 +73,13 @@ public class Visu extends JFrame implements ActionListener {
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, new ImageIcon("src/main/java/Imagen/dif.png"), d
                         , "Option");
                 this.dispose();
-                Tetris game = new Tetris(x,usuario.getText());
+                Tetris game = new Tetris(x, usuario.getText());
                 game.setLocationRelativeTo(null);
                 game.setVisible(true);
             }
             if (clic.equals(dos)) {
                 setVisible(false);
                 conectar(usuario.getText());
-                this.dispose();
             }
         }
     }
@@ -85,22 +87,50 @@ public class Visu extends JFrame implements ActionListener {
     public void conectar(String a) {
         try {
             String id = a;
-
-            Socket s = new Socket("localhost", 2089);
+            puerto();
+            Socket s = new Socket("localhost", puerto);
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
             dout.writeUTF(id);
             String i = new DataInputStream(s.getInputStream()).readUTF();
             if (i.equals("Ya estas registrado")) {
                 JOptionPane.showMessageDialog(this, "YA ESTA REGISTRADO\n");
             } else {
-                Tetrisdos tet = new Tetrisdos(id,s);
+                Tetrisdos tet = new Tetrisdos(id, s);
                 tet.setLocationRelativeTo(null);
                 tet.setVisible(true);
+                this.dispose();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void puerto() throws IOException {
+        FileReader in = new FileReader("src/main/java/Imagen/puertos");
+        Scanner sc = new Scanner(in);
+        int num = sc.nextInt();
+        System.out.println(num);
+        puerto = sc.nextInt();
+        num++;
+        if (num == 4) {
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("src/main/java/Imagen/puertos")));
+            int x=(int) Math.floor(Math.random() * (4000 - 1024 + 1) + 1024);
+            out.println(1);
+            out.println(x);
+            out.close();
+            new Servidor(x);
+        } else {
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("src/main/java/Imagen/puertos")));
+            out.println(num);
+            out.println(puerto);
+            System.out.println(num + "-" + puerto);
+            out.close();
+
+        }
+
+
+
     }
 
     public static void main(String[] args) {

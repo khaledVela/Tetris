@@ -2,6 +2,7 @@ package TT2;
 
 import TT2.Formasdos.Tetrominoes;
 
+import javax.naming.ldap.SortKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,7 +13,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
-
+import Gen.Visu;
 
 public class Tablerodos extends JPanel implements ActionListener {
 
@@ -35,16 +36,17 @@ public class Tablerodos extends JPanel implements ActionListener {
     DataOutputStream dout;
     DefaultListModel dlm;
     ArrayList list = new ArrayList();
+    Socket sock;
     int can = 0;
 
     public Tablerodos(Tetrisdos parent, String a, Socket s) {
+        sock=s;
         iD = a;
         f = parent;
         setBackground(Color.BLACK);
         timer = new Timer(250, this);
         setFocusable(true);
         curPiece = new Formasdos();
-        timer.start();
         statusbar = parent.getStatusBar();
         board = new Tetrominoes[BoardWidth * BoardHeight];
         addKeyListener(new TAdapter());
@@ -73,7 +75,8 @@ public class Tablerodos extends JPanel implements ActionListener {
                     f.dispose();
                     can=Integer.MIN_VALUE;
                     try {
-                        s.close();
+                        sock.close();
+                        Visu vis =new Visu();
                     } catch (IOException exc) {
                         exc.printStackTrace();
                     }
@@ -150,7 +153,6 @@ public class Tablerodos extends JPanel implements ActionListener {
     public void start() {
         if (isPaused)
             return;
-
         isStarted = true;
         isFallingFinished = false;
         numLinesRemoved = 0;
@@ -245,10 +247,17 @@ public class Tablerodos extends JPanel implements ActionListener {
             isStarted = false;
             statusbar.setText("game over");
             f.dispose();
+
             JOptionPane.showMessageDialog(getRootPane(), "Game over");
             can--;
             try {
                 dout.writeUTF(String.valueOf("fin " + iD));
+                try {
+                    sock.close();
+                    Visu vis =new Visu();
+                } catch (IOException exc) {
+                    exc.printStackTrace();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -353,7 +362,7 @@ public class Tablerodos extends JPanel implements ActionListener {
                         ArrayList li = new ArrayList();
                         for (int i = 0; i < list.size(); i++) {
                             if (list.get(i).equals(nomb[1])) {
-                                li.add(nomb[1] + "            G_O");
+                                li.add(nomb[1] + "            Game Over");
                                 can--;
                                 if ((!statusbar.getText().equals("game over")) && (can == 1)) {
                                     JOptionPane.showMessageDialog(getRootPane(), "Has ganado");
@@ -396,6 +405,9 @@ public class Tablerodos extends JPanel implements ActionListener {
                             list.add(nomb[nomb.length - 1]);
                             can++;
                         }
+                        if(list.size()==3){
+                            timer.start();
+                        }else timer.stop();
                     }
                     if (m.equals("menos")) {
                         BoardHeight--;
@@ -411,7 +423,6 @@ public class Tablerodos extends JPanel implements ActionListener {
 
     class TAdapter extends KeyAdapter {
         public void keyPressed(KeyEvent e) {
-
             if (!isStarted || curPiece.getShape() == Tetrominoes.NoShape) {
                 return;
             }
@@ -439,6 +450,8 @@ public class Tablerodos extends JPanel implements ActionListener {
                     break;
                 case KeyEvent.VK_ENTER:
                     oneLineDown();
+                    break;
+                default:
                     break;
             }
 

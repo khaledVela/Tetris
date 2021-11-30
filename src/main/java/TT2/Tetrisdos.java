@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.net.Socket;
 
 
@@ -17,7 +18,7 @@ public class Tetrisdos extends JFrame {
         add(statusbar, BorderLayout.SOUTH);
         Tablerodos board = new Tablerodos(this,a,s);
         add(board);
-        board.start();
+       // board.start();
         setSize(400, 800);
         setTitle("Tetris");
         setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -13,7 +13,7 @@ import javax.swing.*;
 
 import List.diccionario.Escribe_Lee;
 import TT.Formas.Tetrominoes;
-
+import Gen.Visu;
 
 public class Tablero extends JPanel implements ActionListener {
 
@@ -216,6 +216,7 @@ public class Tablero extends JPanel implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 jFrame.dispose();
                 frame.dispose();
+                Visu vis =new Visu();
             }
         });
         jFrame.add(salir);
